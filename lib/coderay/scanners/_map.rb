@@ -15,6 +15,7 @@ module Scanners
     :patch         => :diff,
     :plain         => :text,
     :plaintext     => :text,
+    :specman       => :e,
     :verilog       => :systemverilog,
     :xhtml         => :html,
     :yml           => :yaml
