@@ -13,9 +13,6 @@ module Scanners
     file_extension 'e'
     title 'e'
 
-    # TODO: 0b0101
-    # TODO: -- I am a comment
-    # TODO: 0x0000_0FFF
     # TODO: DUT'unique_name
 
     KEYWORDS = [
@@ -67,6 +64,8 @@ module Scanners
             encoder.text_token match, :space
 
           elsif match = scan(%r! // [^\n\\]* (?: \\. [^\n\\]* )* | /\* (?: .*? \*/ | .* ) !mx)
+            encoder.text_token match, :comment
+          elsif match = scan(%r! -- [^\n\\]* (?: \\. [^\n\\]* )* !mx)
             encoder.text_token match, :comment
 
           elsif match = scan(/ \# \s* if \s* 0 /x)
@@ -121,13 +120,17 @@ module Scanners
             label_expected = false
             encoder.text_token match, :char
 
-          elsif match = scan(/0[xX][0-9A-Fa-f]+/)
+          elsif match = scan(/0[xX][0-9_A-Fa-f]+/)
             label_expected = false
             encoder.text_token match, :hex
 
           elsif match = scan(/(?:0[0-7]+)(?![89.eEfF])/)
             label_expected = false
             encoder.text_token match, :octal
+
+          elsif match = scan(/0[b][0-9_]+/)
+            label_expected = false
+            encoder.text_token match, :binary
 
           elsif match = scan(/(?:\d+)(?![.eEfF])L?L?/)
             label_expected = false
