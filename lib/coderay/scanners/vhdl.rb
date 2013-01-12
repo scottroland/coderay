@@ -14,7 +14,7 @@ module Scanners
 
     # From IEEE Std 1076-2002: Section 13.9 Reserved Words
     KEYWORDS = [
-'abs', 'access', 'after', 'alias', 'all', 'and', 'architecture', 'array', 'assert', 'attribute', 'begin', 'block', 'body', 'buffer', 'bus', 'case', 'component', 'configuration', 'constant', 'disconnect', 'downto', 'else', 'elsif', 'end', 'entity', 'exit', 'file', 'for', 'function', 'generate', 'generic', 'group', 'guarded', 'if', 'impure', 'in', 'inertial', 'inout', 'is', 'label', 'library', 'linkage', 'literal', 'loop', 'map', 'mod', 'nand', 'new', 'next', 'nor', 'not', 'null', 'of', 'on', 'open', 'or', 'others', 'out', 'package', 'port', 'postponed', 'procedural', 'procedure', 'process', 'protected', 'pure', 'range', 'record', 'reference', 'register', 'reject', 'rem', 'report', 'return', 'rol', 'ror', 'select', 'severity', 'shared', 'signal', 'sla', 'sll', 'sra', 'srl', 'subtype', 'then', 'to', 'transport', 'type', 'unaffected', 'units', 'until', 'use', 'variable', 'wait', 'when', 'while', 'with', 'xnor', 'xor'    ]  # :nodoc:
+'abs', 'access', 'after', 'alias', 'all', 'and', 'architecture', 'array', 'assert', 'attribute', 'begin', 'block', 'body', 'case', 'component', 'configuration', 'disconnect', 'downto', 'else', 'elsif', 'end', 'entity', 'exit', 'file', 'for', 'function', 'generate', 'generic', 'group', 'guarded', 'if', 'inertial', 'is', 'label', 'library', 'literal', 'loop', 'map', 'mod', 'nand', 'new', 'next', 'nor', 'not', 'null', 'of', 'on', 'open', 'or', 'others', 'package', 'port', 'postponed', 'procedural', 'procedure', 'process', 'protected', 'range', 'record', 'reference', 'reject', 'rem', 'report', 'return', 'rol', 'ror', 'select', 'severity', 'signal', 'sla', 'sll', 'sra', 'srl', 'subtype', 'then', 'to', 'transport', 'type', 'unaffected', 'units', 'until', 'use', 'wait', 'when', 'while', 'with', 'xnor', 'xor'    ]  # :nodoc:
     
     PREDEFINED_TYPES = [
     ]  # :nodoc:
@@ -23,6 +23,7 @@ module Scanners
     PREDEFINED_VARIABLES = [
     ]  # :nodoc:
     DIRECTIVES = [
+                  'buffer', 'bus', 'constant', 'impure', 'in', 'inout', 'linkage', 'out', 'pure', 'register', 'shared', 'variable'
     ]  # :nodoc:
     
     IDENT_KIND = WordList.new(:ident).
@@ -58,7 +59,7 @@ module Scanners
             end
             encoder.text_token match, :space
 
-          elsif match = scan(%r! // [^\n\\]* (?: \\. [^\n\\]* )* | /\* (?: .*? \*/ | .* ) !mx)
+          elsif match = scan(%r! -- [^\n\\]* (?: \\. [^\n\\]* )* !mx)
             encoder.text_token match, :comment
 
           elsif match = scan(/ \# \s* if \s* 0 /x)
