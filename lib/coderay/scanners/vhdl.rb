@@ -2,10 +2,9 @@ module CodeRay
 module Scanners
 
   # TODO: Review. Most of this code is copied from the C++ scanner and not
-  # for applicability for VHDL.
+  # applicable for VHDL.
 
-  # Scanner for VHDL
-  #
+  # Scanner for IEEE Standard 1076-2002 VHDL
   class VHDL < Scanner
 
     register_for :vhdl

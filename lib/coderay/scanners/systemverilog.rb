@@ -2,9 +2,9 @@ module CodeRay
 module Scanners
 
   # TODO: Review. Most of this code is copied from the C++ scanner and not
-  # for applicability for SystemVerilog.
+  # applicable for SystemVerilog.
 
-  # Scanner for SystemVerilog
+  # Scanner for IEEE Standard 1800-2009 SystemVerilog
   #
   # Aliases: +verilog+
   class SystemVerilog < Scanner
