@@ -13,13 +13,17 @@ module Scanners
     file_extension 'e'
     title 'e'
 
-    
+    # TODO: 0b0101
+    # TODO: -- I am a comment
+    # TODO: 0x0000_0FFF
+    # TODO: DUT'unique_name
+
     KEYWORDS = [
-       'also', 'bits', 'cover', 'each', 'empty', 'extend', 'first', 'for', 'ignore', 'illegal', 'in', 'is', 'item', 'keep', 'like', 'list', 'not', 'only', 'package', 'per_instance', 'radix', 'return', 'soft', 'unit', 'using', 'when'
+       'a', 'also', 'bits', 'cover', 'each', 'else', 'empty', 'extend', 'first', 'for', 'ignore', 'illegal', 'if', 'in', 'is', 'item', 'keep', 'like', 'list', 'not', 'only', 'package', 'per_instance', 'radix', 'result', 'return', 'rf_manager', 'soft', 'sys', 'type', 'unit', 'using', 'var', 'when'
     ]  # :nodoc:
     
     PREDEFINED_TYPES = [
-       'bool', 'bit', 'event', 'string', 'uint'
+       'bool', 'bit', 'event', 'rf_scalar', 'rf_type', 'string', 'uint'
     ]  # :nodoc:
     PREDEFINED_CONSTANTS = [
        'FALSE', 'TRUE'
