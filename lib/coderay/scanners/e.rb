@@ -2,9 +2,9 @@ module CodeRay
 module Scanners
 
   # TODO: Review. Most of this code is copied from the C++ scanner and not
-  # for applicability for Specman e.
+  # applicable for e.
 
-  # Scanner for Specman e
+  # Scanner for IEEE Std 1647 e
   #
   # Aliases: +specmen+
   class E < Scanner
@@ -14,6 +14,11 @@ module Scanners
     title 'e'
 
     # TODO: DUT'unique_name
+
+    # NOTE: e is an odd language in that the essential vocabulary of the
+    # language (like 'extend') are not actually reserved words. The following
+    # parser isn't smart enough to handle that; it pretends that these are
+    # reserved words.
 
     KEYWORDS = [
        'a', 'also', 'bits', 'cover', 'each', 'else', 'empty', 'extend', 'first', 'for', 'ignore', 'illegal', 'if', 'in', 'is', 'item', 'keep', 'like', 'list', 'not', 'only', 'package', 'per_instance', 'radix', 'result', 'return', 'rf_manager', 'soft', 'sys', 'type', 'unit', 'using', 'var', 'when'
