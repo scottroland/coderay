@@ -92,6 +92,37 @@ module Scanners
             match << scan_until(/ ^\# (?:elif|else|endif) .*? $ | \z /xm) unless eos?
             encoder.text_token match, :comment
 
+            #########################
+            # 4.1.4.2 Sized numbers
+          elsif match = scan(/[0-9]+'[bB][0-1_]+/)
+            label_expected = false
+            encoder.text_token match, :binary
+          elsif match = scan(/[0-9]+'[oO][0-7_]+/)
+            label_expected = false
+            encoder.text_token match, :octal
+          elsif match = scan(/[0-9]+'[dD][0-9_a-f]+/)
+            label_expected = false
+            encoder.text_token match, :integer
+          elsif match = scan(/[0-9]+'[hxHX][0-9_a-f]+/)
+            label_expected = false
+            encoder.text_token match, :hex
+
+            #########################
+            # 4.1.4.1 Unsized numbers
+          elsif match = scan(/0x[0-9_a-f]+/)
+            label_expected = false
+            encoder.text_token match, :hex
+          elsif match = scan(/0o([0-7_]+)/)
+            label_expected = false
+            encoder.text_token match, :octal
+          elsif match = scan(/0b[0-1_]+/)
+            label_expected = false
+            encoder.text_token match, :binary
+          elsif match = scan(/\-?[0-9_]+[kmKM]?/)
+            label_expected = false
+            encoder.text_token match, :integer
+
+
           elsif match = scan(/ [-+*=<>?:;,!&^|()\[\]{}~%]+ | \/=? | \.(?!\d) /x)
             label_expected = match =~ /[;\{\}]/
             if case_expected
@@ -139,22 +170,6 @@ module Scanners
           elsif match = scan(/ L?' (?: [^\'\n\\] | \\ #{ESCAPE} )? '? /ox)
             label_expected = false
             encoder.text_token match, :char
-
-          elsif match = scan(/0[xX][0-9_A-Fa-f]+/)
-            label_expected = false
-            encoder.text_token match, :hex
-
-          elsif match = scan(/(?:0[0-7]+)(?![89.eEfF])/)
-            label_expected = false
-            encoder.text_token match, :octal
-
-          elsif match = scan(/0[b][0-9_]+/)
-            label_expected = false
-            encoder.text_token match, :binary
-
-          elsif match = scan(/(?:\d+)(?![.eEfF])L?L?/)
-            label_expected = false
-            encoder.text_token match, :integer
 
           elsif match = scan(/\d[fF]?|\d*\.\d+(?:[eE][+-]?\d+)?[fF]?|\d+[eE][+-]?\d+[fF]?/)
             label_expected = false
