@@ -49,7 +49,7 @@ module Scanners
     
     def scan_tokens encoder, options
 
-      state = :initial
+      state = :comment_segment
       label_expected = true
       case_expected = false
       label_expected_before_preproc_line = nil
@@ -59,16 +59,31 @@ module Scanners
 
         case state
 
-        when :initial
+        when :comment_segment
+          if match = scan(/^<'$/)            
+            encoder.text_token match, :operator
+            state = :code_segment
+          elsif match = scan(/^.+$/)             
+            encoder.text_token match, :comment
+          elsif match = scan(/\\\n/)
+            encoder.text_token match, :space
+          else
+            encoder.text_token getch, :error
+          end
 
-          if match = scan(/ \s+ | \\\n /x)
+        when :code_segment
+          if match = scan(/^'>$/)            
+            encoder.text_token match, :operator
+            state = :comment_segment
+
+          elsif match = scan(/ \s+ | \\\n /x)
             if in_preproc_line && match != "\\\n" && match.index(?\n)
               in_preproc_line = false
               label_expected = label_expected_before_preproc_line
             end
             encoder.text_token match, :space
 
-          elsif match = scan(%r! // [^\n\\]* (?: \\. [^\n\\]* )* | /\* (?: .*? \*/ | .* ) !mx)
+          elsif match = scan(%r! // [^\n\\]* (?: \\. [^\n\\]* )* !mx)
             encoder.text_token match, :comment
           elsif match = scan(%r! -- [^\n\\]* (?: \\. [^\n\\]* )* !mx)
             encoder.text_token match, :comment
@@ -156,14 +171,14 @@ module Scanners
           elsif match = scan(/"/)
             encoder.text_token match, :delimiter
             encoder.end_group :string
-            state = :initial
+            state = :code_segment
             label_expected = false
           elsif match = scan(/ \\ (?: #{ESCAPE} | #{UNICODE_ESCAPE} ) /mox)
             encoder.text_token match, :char
           elsif match = scan(/ \\ | $ /x)
             encoder.end_group :string
             encoder.text_token match, :error
-            state = :initial
+            state = :code_segment
             label_expected = false
           else
             raise_inspect "else case \" reached; %p not handled." % peek(1), encoder
@@ -172,28 +187,28 @@ module Scanners
         when :include_expected
           if match = scan(/<[^>\n]+>?|"[^"\n\\]*(?:\\.[^"\n\\]*)*"?/)
             encoder.text_token match, :include
-            state = :initial
+            state = :code_segment
 
           elsif match = scan(/\s+/)
             encoder.text_token match, :space
-            state = :initial if match.index ?\n
+            state = :code_segment if match.index ?\n
 
           else
-            state = :initial
+            state = :code_segment
 
           end
         
         when :class_name_expected
           if match = scan(/ [A-Za-z_][A-Za-z_0-9]* /x)
             encoder.text_token match, :class
-            state = :initial
+            state = :code_segment
 
           elsif match = scan(/\s+/)
             encoder.text_token match, :space
 
           else
             encoder.text_token getch, :error
-            state = :initial
+            state = :code_segment
 
           end
           
